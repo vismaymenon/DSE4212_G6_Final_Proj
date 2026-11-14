@@ -5,3 +5,5 @@ matplotlib
 seaborn
 shap
 jupyter
+xgboost
+lightgbm
