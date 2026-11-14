@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 
-from features import SEED, preprocessor
+from constants import SEED
 from models import common
 
 NAME = "Logistic Regression"
@@ -17,7 +17,7 @@ GRID = {
 
 
 def build():
-    return Pipeline([("pre", preprocessor()),
+    return Pipeline([("pre", common.preprocessor()),
                      ("clf", LogisticRegression(solver="saga", max_iter=5000, random_state=SEED))]) #saga solver supports L1, L2, and elastic net regularization. 
 
 
@@ -34,7 +34,7 @@ def report(res, top=15):
     plt.figure(figsize=(8, 0.35 * len(odds) + 1))
     plt.barh(odds.index, odds - 1, left=1, color=np.where(odds > 1, "tab:red", "tab:green"))
     plt.axvline(1, color="k", lw=0.8)
-    plt.title("Odds ratios (per 1 SD for numeric; vs. not-in-category for dummies)\nred = raises default risk")
+    plt.title("Odds ratios (per 1 SD for numeric; vs. not-in-category for dummies; per unit for ordinal and binary)\nred = raises default risk")
     plt.xlabel("Odds ratio")
     plt.tight_layout()
     plt.show()
