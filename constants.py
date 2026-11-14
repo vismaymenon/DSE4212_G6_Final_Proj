@@ -46,4 +46,6 @@ PROTECTED = ["sex", "foreign_worker"]  # fairness only, never model inputs
 
 NUMERIC = ["duration", "log_amount", "log_monthly_payment", "age", "duration_x_rate", "stability_score"]
 CATEGORICAL = ["checking", "savings", "history", "purpose_type", "other_plans", "housing"]
-# everything else in FEATURES (ordinal and binary) passes through unchanged
+ORDINAL = ["employment_level", "property_level", "installment_rate", "n_credits", "job_level", "asset_score"]
+BINARY = ["has_guarantor", "has_coapplicant", "thin_buffer"]
+assert sorted(NUMERIC + ORDINAL + CATEGORICAL + BINARY) == sorted(FEATURES), "feature groups out of sync with FEATURES"

@@ -10,18 +10,18 @@ from sklearn.model_selection import GridSearchCV, cross_val_predict
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-from constants import (CV, SEED, NUMERIC, CATEGORICAL,FEATURES)
+from constants import CV, SEED, NUMERIC, ORDINAL, CATEGORICAL, BINARY
 
 COST_FN, COST_FP = 5, 1  # german.doc cost matrix: bad classed good = 5, good classed bad = 1
 THRESHOLDS = np.linspace(0.01, 0.99, 99)
 
 def preprocessor():
-    """Scale numeric, one hot categorical, pass ordinal and binary through. Fit on train only, via the pipeline."""
-    passthrough = [f for f in FEATURES if f not in NUMERIC + CATEGORICAL]
+    """Scale numeric and ordinal, one-hot categorical, pass binary 0/1 through. Fit on train only, via the pipeline."""
+    # ordinal levels are scaled so regularisation penalises every coefficient on the same footing
     return ColumnTransformer(
-        [("num", StandardScaler(), NUMERIC),
+        [("num", StandardScaler(), NUMERIC + ORDINAL),
          ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), CATEGORICAL),
-         ("pass", "passthrough", passthrough)],
+         ("bin", "passthrough", BINARY)],
         verbose_feature_names_out=False)
 
 

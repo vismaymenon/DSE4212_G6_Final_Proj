@@ -34,7 +34,7 @@ def report(res, top=15):
     plt.figure(figsize=(8, 0.35 * len(odds) + 1))
     plt.barh(odds.index, odds - 1, left=1, color=np.where(odds > 1, "tab:red", "tab:green"))
     plt.axvline(1, color="k", lw=0.8)
-    plt.title("Odds ratios (per 1 SD for numeric; vs. not-in-category for dummies; per unit for ordinal and binary)\nred = raises default risk")
+    plt.title("Odds ratios (per 1 SD for numeric and ordinal; vs. 0 for one-hot and binary flags)\nred = raises default risk")
     plt.xlabel("Odds ratio")
     plt.tight_layout()
     plt.show()
