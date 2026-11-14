@@ -7,3 +7,4 @@ shap
 jupyter
 xgboost
 lightgbm
+tensorflow
