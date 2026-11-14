@@ -5,7 +5,7 @@ import pandas as pd
 from lightgbm import LGBMClassifier
 from sklearn.pipeline import Pipeline
 
-from features import preprocessor
+from constants import SEED
 from models import common
 
 
@@ -14,10 +14,10 @@ NAME = "LightGBM"
 
 def build():
     return Pipeline([
-        ("pre", preprocessor()),
+        ("pre", common.preprocessor()),
         ("clf", LGBMClassifier(
             objective="binary",
-            random_state=42,
+            random_state=SEED,
             n_jobs=1,
             verbosity=-1,
             importance_type="gain",

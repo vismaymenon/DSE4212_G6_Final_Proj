@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.pipeline import Pipeline
 from xgboost import XGBClassifier
 
-from features import SEED, preprocessor
+from constants import SEED
 from models import common
 
 NAME = "XGBoost"
@@ -19,7 +19,7 @@ GRID = {
 
 
 def build():
-    return Pipeline([("pre", preprocessor()),
+    return Pipeline([("pre", common.preprocessor()),
                      ("clf", XGBClassifier(subsample=0.8, reg_lambda=1.0, tree_method="hist",
                                            eval_metric="logloss", n_jobs=1,  # GridSearchCV already parallelises
                                            random_state=SEED))])
