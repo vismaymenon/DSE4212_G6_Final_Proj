@@ -2,7 +2,7 @@
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 
-from features import SEED, preprocessor
+from constants import SEED
 from models import common
 
 NAME = "Model name"
@@ -12,7 +12,7 @@ GRID = {"clf__n_estimators": [200, 500]}
 
 
 def build():
-    return Pipeline([("pre", preprocessor()), ("clf", RandomForestClassifier(random_state=SEED))])
+    return Pipeline([("pre", common.preprocessor()), ("clf", RandomForestClassifier(random_state=SEED))])
 # sklearn's Pipeline allows you to chain together multiple steps, such as preprocessing and model training, into a single object. 
 # In this case, the pipeline consists of two steps: "pre" for preprocessing the data using the preprocessor() function,
 # and "clf" for training a RandomForestClassifier with a specified random seed.

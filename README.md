@@ -20,3 +20,5 @@ CV folds and cost matrix, so results are directly comparable.
 Test-set discipline: `run()` only ever sees training data. Compare and choose models on CV results
 (`common.compare(..., on="cv")`). The test set is scored once, in the "Final evaluation" section of `master.ipynb`,
 after every model is frozen. Don't tweak models after looking at test results.
+
+Jupyter notebooks for outward facing results (initial EDA, post feature creation analysis, etc.) Python scripts for stuff that is called.

@@ -7,11 +7,22 @@ from sklearn.metrics import (ConfusionMatrixDisplay, average_precision_score, co
                              f1_score, precision_recall_curve, precision_score, recall_score,
                              roc_auc_score, roc_curve)
 from sklearn.model_selection import GridSearchCV, cross_val_predict
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-from features import CV, SEED
+from constants import CV, SEED, NUMERIC, ORDINAL, CATEGORICAL, BINARY
 
 COST_FN, COST_FP = 5, 1  # german.doc cost matrix: bad classed good = 5, good classed bad = 1
 THRESHOLDS = np.linspace(0.01, 0.99, 99)
+
+def preprocessor():
+    """Scale numeric and ordinal, one-hot categorical, pass binary 0/1 through. Fit on train only, via the pipeline."""
+    # ordinal levels are scaled so regularisation penalises every coefficient on the same footing
+    return ColumnTransformer(
+        [("num", StandardScaler(), NUMERIC + ORDINAL),
+         ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), CATEGORICAL),
+         ("bin", "passthrough", BINARY)],
+        verbose_feature_names_out=False)
 
 
 def cost(y, pred): # Counts the mistakes and charges 5 for each bad borrower approved and 1 for each good borrower rejected.
@@ -128,7 +139,7 @@ def explain(res, data, max_display=15):
     shap.plots.waterfall(sv[worst], max_display=max_display)
     return sv
 
-# Approval rates and error rates for each group (sex, age under 25, foreign worker).
+# Approval rates and error rates for each group (sex, foreign worker).
 def fairness(res, data):
     g = data["groups_test"].reset_index(drop=True)
     y, p = _pick(res, "test")
