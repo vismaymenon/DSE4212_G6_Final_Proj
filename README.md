@@ -4,7 +4,7 @@ Project 1: credit default prediction on the German Credit data (UCI Statlog).
 
 ## Structure
 ```
-Initial EDA.ipynb        full data, univariate only (distributions, skew, category counts, coding checks); never looks at the target
+Initial EDA.ipynb        full data, univariate only (distributions, skew, category counts, coding checks); never relates features to the target
 feature EDA.ipynb        TRAIN set only: feature vs target (bad rates, correlation, VIF, Information Value with bootstrap CIs)
 master.ipynb             Part 1: one cell per model + CV comparison. Part 2: final test evaluation, SHAP, fairness
 
