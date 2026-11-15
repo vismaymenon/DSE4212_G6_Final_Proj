@@ -1,6 +1,4 @@
-import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 
@@ -11,7 +9,7 @@ NAME = "Logistic Regression"
 # Hyperparameter grid for logistic regression: regularization strength (C), l1_ratio for elastic net, and class weight.
 GRID = {
     "clf__C": np.logspace(-3, 2, 11), # Regularisation strength (inverse of regularisation parameter). Smaller values specify stronger regularization.
-    "clf__l1_ratio": [0.2, 0.5, 0.8, 1.0],
+    "clf__l1_ratio": [0.0, 0.2, 0.5, 0.8, 1.0],
     "clf__class_weight": [None, "balanced"],  # None = no class weighting, "balanced" = inverse frequency of classes (Bad is weighted more heavily)
 }
 

@@ -29,8 +29,8 @@ Every model uses the same split, CV folds, preprocessor and cost matrix, so resu
 
 ## Key decisions
 - Cost matrix from the dataset documentation: approving a bad borrower costs 5, rejecting a good one costs 1. Each model's decision threshold minimises this cost on out-of-fold training predictions.
-- `sex` and `foreign_worker` are never model inputs; they are used only in the fairness analysis. Both have known coding problems (Grömping 2019, "South German Credit"): `foreign_worker` is reversed and sex cannot be fully recovered from `personal_status`. Fairness results are indicative only.
-- `age` is a model input.
+- `sex` and `foreign_worker` are never model inputs either; they are used only in the fairness analysis. Both have known coding problems (Grömping 2019, "South German Credit"): `foreign_worker` is reversed and sex cannot be fully recovered from `personal_status`. Fairness results are indicative only.
+- `age` is not a model input. It is used only for the fairness check, as `age_less_30` (30 or under vs over 30).
 - No income field exists, so loan-to-income is approximated (monthly payment = amount / duration; `installment_rate` is the instalment as a % of disposable income).
 
 ## Test-set discipline

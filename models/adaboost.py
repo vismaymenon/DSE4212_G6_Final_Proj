@@ -1,5 +1,3 @@
-import matplotlib.pyplot as plt
-import pandas as pd
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.tree import DecisionTreeClassifier
