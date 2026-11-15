@@ -132,10 +132,12 @@ def explain(res, data, max_display=15, bg_size=800, merge=SHAP_GROUPS):
     names = pre.get_feature_names_out()
     X_bg = pd.DataFrame(pre.transform(data["X_train"]), columns=names)
     X_te = pd.DataFrame(pre.transform(data["X_test"]), columns=names)
+    bg = shap.sample(X_bg, bg_size, random_state=SEED)
+    masker = shap.maskers.Independent(bg, max_samples=bg_size)
     try:
-        explainer = shap.Explainer(clf, shap.sample(X_bg, bg_size, random_state=SEED))
+        explainer = shap.Explainer(clf, masker)
     except Exception:
-        explainer = shap.Explainer(lambda x: clf.predict_proba(x)[:, 1], shap.sample(X_bg, bg_size, random_state=SEED))
+        explainer = shap.Explainer(lambda x: clf.predict_proba(x)[:, 1], masker)
     sv = explainer(X_te)
     if sv.values.ndim == 3:
         sv = sv[:, :, 1]
