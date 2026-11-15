@@ -37,15 +37,23 @@ PURPOSE_TYPE = {"education": "professional", "retraining": "professional", "busi
                 "vacation": "wants", "radio/tv": "wants",
                 "appliances": "others", "other": "others"}
 
-FEATURES = ["duration", "log_amount", "log_monthly_payment", "age", "employment_level", "property_level",
+FEATURES = ["duration", "log_amount", "log_monthly_payment", "employment_level", "property_level",
             "installment_rate", "n_credits", "checking", "savings", "history", "purpose_type",
             "other_plans", "housing", "has_guarantor", "has_coapplicant", "thin_buffer",
             "duration_x_rate", "stability_score", "asset_score", "job_level"]
 
-PROTECTED = ["sex", "foreign_worker"]  # fairness only, never model inputs
+PROTECTED = ["sex", "foreign_worker", "age_less_30"]  # fairness only, never model inputs
 
-NUMERIC = ["duration", "log_amount", "log_monthly_payment", "age", "duration_x_rate", "stability_score"]
+NUMERIC = ["duration", "log_amount", "log_monthly_payment", "duration_x_rate", "stability_score"]
 CATEGORICAL = ["checking", "savings", "history", "purpose_type", "other_plans", "housing"]
 ORDINAL = ["employment_level", "property_level", "installment_rate", "n_credits", "job_level", "asset_score"]
 BINARY = ["has_guarantor", "has_coapplicant", "thin_buffer"]
 assert sorted(NUMERIC + ORDINAL + CATEGORICAL + BINARY) == sorted(FEATURES), "feature groups out of sync with FEATURES"
+
+SHAP_GROUPS = {
+    "log_amount": "credit amount", "log_monthly_payment": "credit amount",
+    "duration": "loan duration", "duration_x_rate": "loan duration",
+    "has_guarantor": "other debtors", "has_coapplicant": "other debtors",
+    "stability_score": "stability", "employment_level": "stability",
+    "asset_score": "assets", "property_level": "assets",
+}

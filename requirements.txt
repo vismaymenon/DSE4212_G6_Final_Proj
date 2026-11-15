@@ -1,6 +1,6 @@
 numpy
 pandas
-scikit-learn>=1.8
+scikit-learn>1.8
 matplotlib
 seaborn
 shap
