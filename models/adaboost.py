@@ -29,12 +29,3 @@ def run(data):  # training data only - the test set is evaluated once in master.
 
 def report(res, top=15):
     common.report(res)  # CV view only
-    # Weighted impurity decrease across all trees; magnitude only - see SHAP for direction.
-    imp = pd.Series(res["model"]["clf"].feature_importances_,
-                    index=res["model"]["pre"].get_feature_names_out()).sort_values().tail(top)
-    plt.figure(figsize=(8, 0.35 * len(imp) + 1))
-    plt.barh(imp.index, imp.values)
-    plt.title("AdaBoost feature importance (weighted impurity decrease)\nmagnitude only - see SHAP for direction")
-    plt.xlabel("Importance")
-    plt.tight_layout()
-    plt.show()

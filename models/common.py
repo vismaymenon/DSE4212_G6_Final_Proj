@@ -10,7 +10,7 @@ from sklearn.model_selection import GridSearchCV, cross_val_predict
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-from constants import CV, SEED, NUMERIC, ORDINAL, CATEGORICAL, BINARY
+from constants import CV, SEED, NUMERIC, ORDINAL, CATEGORICAL, BINARY, SHAP_GROUPS
 
 COST_FN, COST_FP = 5, 1  # german.doc cost matrix: bad classed good = 5, good classed bad = 1
 THRESHOLDS = np.linspace(0.01, 0.99, 99)
@@ -115,8 +115,16 @@ def compare(results, on="cv"):
     plt.legend()
     plt.show()
 
+
+def _original(name):
+    for c in CATEGORICAL:
+        if name.startswith(c + "_"):
+            return c
+    return name
+
+
 # SHAP plots: which features matter overall + a breakdown of why the riskiest applicant was flagged.
-def explain(res, data, max_display=15):
+def explain(res, data, max_display=15, bg_size=800, merge=SHAP_GROUPS):
     import shap
 
     _, proba = _pick(res, "test")
@@ -125,21 +133,50 @@ def explain(res, data, max_display=15):
     X_bg = pd.DataFrame(pre.transform(data["X_train"]), columns=names)
     X_te = pd.DataFrame(pre.transform(data["X_test"]), columns=names)
     try:
-        explainer = shap.Explainer(clf, X_bg)  # exact linear/tree explainer when supported
+        explainer = shap.Explainer(clf, shap.sample(X_bg, bg_size, random_state=SEED))
     except Exception:
         explainer = shap.Explainer(lambda x: clf.predict_proba(x)[:, 1], shap.sample(X_bg, 100, random_state=SEED))
     sv = explainer(X_te)
     if sv.values.ndim == 3:
         sv = sv[:, :, 1]
 
-    shap.plots.bar(sv, max_display=max_display)
+    sv.data = sv.data.copy()
+    for j, n in enumerate(names):
+        if n in data["X_test"].columns:
+            sv.data[:, j] = data["X_test"][n].to_numpy()
+
+    owner = pd.Series([_original(n) for n in names], index=names)
+    if merge:
+        owner = owner.replace(merge)
+    grouped = pd.DataFrame(sv.values, columns=names).T.groupby(owner).sum().T
+    imp = grouped.abs().mean().sort_values().tail(max_display)
+    plt.figure(figsize=(8, 0.35 * len(imp) + 1))
+    plt.barh(imp.index, imp.values)
+    plt.title("Mean absolute SHAP value per feature")
+    plt.xlabel("Mean |SHAP|")
+    plt.tight_layout()
+    plt.show()
+
+    # this method is compatible with all the models used; adaboost and ANN use the fallback
+    # however while most including xgboost use log odds, some use probability. therefore rankings are 
+    # comparable but raw values are not.
+
+    #given the concerns of multicollinearity and the dummy variables, the grouped bar chart is better for ranking
+    # the beeswarm plot that follows gives more insight using each category
+
+    # the column groups are only used for the grouped bar chart, not the plots that come after
+    # even the categorical dummy collapsing does not hold up after for the beeswarm plot
     shap.plots.beeswarm(sv, max_display=max_display)
-    worst = int(np.argmax(proba))
-    print(f"Highest-risk test applicant: P(default) = {proba[worst]:.2f}")
-    shap.plots.waterfall(sv[worst], max_display=max_display)
+
+
+    cases = [("Highest risk", int(np.argmax(proba))),
+             ("Closest to the decision threshold", int(np.argmin(np.abs(proba - res["threshold"]))))]
+    for label, i in cases:
+        print(f"{label}: P(default) = {proba[i]:.2f}")
+        shap.plots.waterfall(sv[i], max_display=max_display)
     return sv
 
-# Approval rates and error rates for each group (sex, foreign worker).
+# Approval rates and error rates for each group (sex, foreign worker,age_less_30).
 def fairness(res, data):
     g = data["groups_test"].reset_index(drop=True)
     y, p = _pick(res, "test")

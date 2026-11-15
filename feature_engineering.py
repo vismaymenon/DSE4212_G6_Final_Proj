@@ -26,6 +26,7 @@ def engineer(df):
                          + (df["housing"] == "own").astype(int)
                          + df["savings"].isin(["500-1000", ">=1000"]).astype(int))
     df["sex"] = np.where(df["personal_status"].str.startswith("female"), "female", "male")
+    df["age_less_30"] = np.where(df["age"] <= 30, "30 or under", "over 30")
     return df
 
 

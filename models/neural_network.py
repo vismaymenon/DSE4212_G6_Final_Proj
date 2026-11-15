@@ -1,4 +1,3 @@
-"""ANN (sklearn MLP). Small network; overfitting is curbed by an L2 penalty, a CV tuned iteration cap and low capacity."""
 import warnings
 
 import matplotlib.pyplot as plt
@@ -13,9 +12,8 @@ from models import common
 NAME = "ANN"
 GRID = {"clf__hidden_layer_sizes": [(4,), (8,), (16,), (8, 4)],
         "clf__activation": ["relu", "tanh"],
-        "clf__alpha": [0.01, 0.1, 1, 3, 10],      # L2 penalty, divided by n inside sklearn so useful values are large
-        "clf__max_iter": [50, 100, 200, 400]}     # iteration cap acts as early stopping, chosen by CV AUC
-
+        "clf__alpha": [0.01, 0.1, 1, 3, 10],
+        "clf__max_iter": [100, 200, 300]}
 
 class QuietMLP(MLPClassifier):
     """MLPClassifier that hides ConvergenceWarning (stopping at max_iter is intended). Needed because
