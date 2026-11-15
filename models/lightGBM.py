@@ -1,7 +1,5 @@
 """LightGBM credit-default model using the shared training workflow."""
 
-import matplotlib.pyplot as plt
-import pandas as pd
 from lightgbm import LGBMClassifier
 from sklearn.pipeline import Pipeline
 
