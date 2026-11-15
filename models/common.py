@@ -135,7 +135,7 @@ def explain(res, data, max_display=15, bg_size=800, merge=SHAP_GROUPS):
     try:
         explainer = shap.Explainer(clf, shap.sample(X_bg, bg_size, random_state=SEED))
     except Exception:
-        explainer = shap.Explainer(lambda x: clf.predict_proba(x)[:, 1], shap.sample(X_bg, 100, random_state=SEED))
+        explainer = shap.Explainer(lambda x: clf.predict_proba(x)[:, 1], shap.sample(X_bg, bg_size, random_state=SEED))
     sv = explainer(X_te)
     if sv.values.ndim == 3:
         sv = sv[:, :, 1]
